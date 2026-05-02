@@ -32,10 +32,12 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-
+.env.local
 # vercel
 .vercel
-
+# 本地 SQLite 数据库（小说数据）
+prisma/*.db
+prisma/*.db-journal
 # typescript
 *.tsbuildinfo
 next-env.d.ts

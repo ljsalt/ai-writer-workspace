@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Novel {
+  id          String      @id @default(cuid())
+  title       String
+  author      String
+  description String?
+  coverImage  String?
+  aiProvider  String?
+  aiBaseUrl   String?
+  aiApiKey    String?
+  aiModelId   String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  characters    Character[]
+  worldSettings WorldSetting[]
+  chapters      Chapter[]
+}
+
+model Character {
+  id          String  @id @default(cuid())
+  novelId     String
+  novel       Novel   @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  name        String
+  aliases     String?
+  personality String?
+  appearance  String?
+  background  String?
+  secrets     String?
+  notes       String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  chapters    Chapter[] @relation("ChapterCharacters")
+
+  @@index([novelId])
+}
+
+model WorldSetting {
+  id        String  @id @default(cuid())
+  novelId   String
+  novel     Novel   @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  category  String
+  name      String
+  content   String?
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chapters  Chapter[] @relation("ChapterWorldSettings")
+
+  @@index([novelId])
+}
+
+model Chapter {
+  id        String  @id @default(cuid())
+  novelId   String
+  novel     Novel   @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  order     Int
+  title     String
+  content   String?
+  summary   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  characters    Character[]     @relation("ChapterCharacters")
+  worldSettings WorldSetting[]  @relation("ChapterWorldSettings")
+
+  @@index([novelId])
+}
